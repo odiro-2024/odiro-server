@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -27,4 +30,17 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
+
+    @OneToMany(mappedBy = "initializer")
+    private List<Plan> initalizedPlans = new ArrayList<>();
+
+    @OneToMany(mappedBy = "proposer")
+    private List<Todo> proposedTodos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "participant")
+    private List<PlanMember> joinedPlan = new ArrayList<>();
+
 }
