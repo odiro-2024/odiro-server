@@ -1,5 +1,9 @@
 package odiro.dto.location;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class FestivalDto {
     private String addr1;
     private String addr2;

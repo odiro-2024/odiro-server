@@ -62,7 +62,9 @@ dependencies {
 	//공공api
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 	implementation 'com.google.code.gson:gson'
-	implementation 'org.json:json:20230918'
+	//implementation 'org.json:json:20230918'
+
+	implementation 'org.json:json:20210307'
 }
 
 tasks.named('test') {

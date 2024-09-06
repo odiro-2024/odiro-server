@@ -4,9 +4,13 @@ import lombok.RequiredArgsConstructor;
 import odiro.domain.DayPlan;
 import odiro.domain.Location;
 import odiro.domain.Plan;
+import odiro.dto.location.WishLocationInDetailPage;
 import odiro.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -103,5 +107,28 @@ public class LocationService {
 
         locationRepository.save(location);
         return location;
+    }
+
+    public List<WishLocationInDetailPage> getWishLocationsByPlanId(Long planId) {
+        List<Location> wishLocations = locationRepository.findByPlanIdAndDayPlanIsNull(planId);
+        return wishLocations.stream()
+                .map(this::convertToWishLocationInDetailPage)
+                .collect(Collectors.toList());
+    }
+
+    private WishLocationInDetailPage convertToWishLocationInDetailPage(Location location) {
+        WishLocationInDetailPage dto = new WishLocationInDetailPage();
+        dto.setId(location.getId());
+        dto.setAddressName(location.getAddressName());
+        dto.setKakaoMapId(location.getKakaoMapId());
+        dto.setPhone(location.getPhone());
+        dto.setPlaceName(location.getPlaceName());
+        dto.setPlaceUrl(location.getPlaceUrl());
+        dto.setLat(location.getLat());
+        dto.setLng(location.getLng());
+        dto.setRoadAddressName(location.getRoadAddressName());
+        dto.setImgUrl(location.getImgUrl());
+        dto.setCategoryGroupName(location.getCategoryGroupName());
+        return dto;
     }
 }

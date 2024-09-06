@@ -9,6 +9,7 @@ import odiro.domain.member.Member;
 import odiro.dto.dayPlan.DayPlanInDetailPage;
 import odiro.dto.comment.CommentInDetailPage;
 import odiro.dto.location.LocationInDetailPage;
+import odiro.dto.location.WishLocationInDetailPage;
 import odiro.dto.member.HomeResponse;
 import odiro.dto.member.InitializerInDetailPage;
 import odiro.dto.member.MemberInDetailPage;
@@ -20,6 +21,7 @@ import odiro.dto.plan.GetDetailPlanResponse;
 import odiro.dto.plan.InitPlanRequest;
 import odiro.dto.plan.InitPlanResponse;
 import odiro.service.DayPlanService;
+import odiro.service.LocationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +42,7 @@ public class PlanController {
 
     private final PlanService planService;
     private final DayPlanService dayPlanService;
+    private final LocationService locationService;
 
     @GetMapping("/home")
     public List<HomeResponse> homeForm( @AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -105,8 +108,10 @@ public class PlanController {
                 })
                 .collect(Collectors.toList());
 
+        List<WishLocationInDetailPage> wishLocations = locationService.getWishLocationsByPlanId(planId);
+
         GetDetailPlanResponse response = new GetDetailPlanResponse(
-                plan.getId(), plan.getTitle(), plan.getFirstDay(), plan.getLastDay(), initializerResponse, memberResponses, dayPlanResponses
+                plan.getId(), plan.getTitle(), plan.getFirstDay(), plan.getLastDay(), initializerResponse, memberResponses, dayPlanResponses, wishLocations
         );
 
         return response;

@@ -18,8 +18,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+//import org.springframework.boot.configurationprocessor.json.JSONArray;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -174,75 +177,137 @@ public class LocationController {
         return ResponseEntity.noContent().build();
     }
 
+//    @PostMapping("/location/festival/research")
+//    public ResponseEntity<FestivalResearchResponse> FestivalResearch(@RequestBody FestivalResearchRequest request) {
+//
+//        try {
+//            String servicekey = "szHH6COt5YFTsdBxmYiQHMud7PenOjVtlp3UgLc9a16gRpnoLPcSlKecg9w7Rd%2Bhz0bOAHMnfpQfMDx3KaYpNA%3D%3D";
+//            String infourl = "http://apis.data.go.kr/B551011/KorService1/searchFestival1?";
+//            StringBuilder infosb = new StringBuilder();
+//            infosb.append(infourl);
+//            infosb.append("MobileOS=ETC");
+//            infosb.append("&MobileApp=odiro");
+//            infosb.append("&_type=json");
+//            infosb.append("&eventStartDate=").append(request.getYyyymmdd());
+//            infosb.append("&serviceKey=").append(servicekey);
+//
+//            //http 요청 수행
+//            URL inurl = new URL(infosb.toString());
+//            HttpURLConnection inconn = (HttpURLConnection) inurl.openConnection();
+//
+//            if (inconn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+//                try (BufferedReader br2 = new BufferedReader(new InputStreamReader(inconn.getInputStream(), "UTF-8"))) {
+//                    StringBuilder inst = new StringBuilder();
+//                    String infoline;
+//                    while ((infoline = br2.readLine()) != null) {
+//                        inst.append(infoline);
+//                    }
+//
+//                    System.out.println("Response Data: " + inst.toString());
+//
+//                    // JSON 파싱
+//                    JSONObject json1 = new JSONObject(inst.toString());
+//                    JSONObject resp1 = json1.getJSONObject("response");
+//                    JSONObject body1 = resp1.getJSONObject("body");
+//                    JSONObject items1 = body1.getJSONObject("items");
+//                    JSONArray itemar = items1.getJSONArray("item");
+//
+//                    List<FestivalDto> itemList = new ArrayList<>();
+//
+//                    // JSONArray의 길이 얻기
+//                    int length = itemar.length();
+//                    for (int i = 0; i < length; i++) {
+//                        JSONObject item1 = itemar.getJSONObject(i);
+//
+//                        // 필요한 데이터 추출 및 ItemDTO 생성
+//                        FestivalDto itemDTO = new FestivalDto(
+//                                item1.optString("addr1", ""),
+//                                item1.optString("addr2", ""),
+//                                item1.optString("eventstartdate", ""),
+//                                item1.optString("eventenddate", ""),
+//                                item1.optString("firstimage", ""),
+//                                item1.optString("firstimage2", ""),
+//                                item1.optString("tel", ""),
+//                                item1.optString("title", "")
+//                        );
+//                        itemList.add(itemDTO);
+//                    }
+//
+//                    // LocationResponseDTO 생성 및 성공적인 응답 반환
+//                    FestivalResearchResponse responseDTO = new FestivalResearchResponse(itemList);
+//                    return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+//                }
+//            } else {
+//                // 오류 응답
+//                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            // 예외 발생 시 에러 응답
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
     @PostMapping("/location/festival/research")
-    public ResponseEntity<FestivalResearchResponse> FestivalResearch(@RequestBody FestivalResearchRequest request) {
+    public ResponseEntity<FestivalResearchResponse> festivalResearch(@RequestBody FestivalResearchRequest request) {
+        String serviceKey = "szHH6COt5YFTsdBxmYiQHMud7PenOjVtlp3UgLc9a16gRpnoLPcSlKecg9w7Rd%2Bhz0bOAHMnfpQfMDx3KaYpNA%3D%3D";
+        String apiUrl = "http://apis.data.go.kr/B551011/KorService1/searchFestival1?";
 
         try {
-            String servicekey = "szHH6COt5YFTsdBxmYiQHMud7PenOjVtlp3UgLc9a16gRpnoLPcSlKecg9w7Rd%2Bhz0bOAHMnfpQfMDx3KaYpNA%3D%3D";
-            String infourl = "http://apis.data.go.kr/B551011/KorService1/searchFestival1?";
-            StringBuilder infosb = new StringBuilder();
-            infosb.append(infourl);
-            infosb.append("MobileOS=ETC");
-            infosb.append("&MobileApp=odiro");
-            infosb.append("&_type=json");
-            infosb.append("&eventStartDate=").append(request.getYyyymmdd());
-            infosb.append("&MobileApp=odiro");
-            infosb.append("&serviceKey=").append(servicekey);
+            StringBuilder urlBuilder = new StringBuilder(apiUrl);
+            urlBuilder.append("MobileOS=ETC");
+            urlBuilder.append("&MobileApp=odiro");
+            urlBuilder.append("&_type=json");
+            urlBuilder.append("&eventStartDate=").append(request.getYyyymmdd());
+            urlBuilder.append("&serviceKey=").append(serviceKey);
 
-            //http 요청 수행
-            URL inurl = new URL(infosb.toString());
-            HttpURLConnection inconn = (HttpURLConnection) inurl.openConnection();
+            // HTTP 요청 수행
+            URL url = new URL(urlBuilder.toString());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
 
-            if (inconn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                try (BufferedReader br2 = new BufferedReader(new InputStreamReader(inconn.getInputStream(), "UTF-8"))) {
-                    StringBuilder inst = new StringBuilder();
-                    String infoline;
-                    while ((infoline = br2.readLine()) != null) {
-                        inst.append(infoline);
-                    }
-
-                    System.out.println("Response Data: " + inst.toString());
-
-                    // JSON 파싱
-                    JSONObject json1 = new JSONObject(inst.toString());
-                    JSONObject resp1 = json1.getJSONObject("response");
-                    JSONObject body1 = resp1.getJSONObject("body");
-                    JSONObject items1 = body1.getJSONObject("items");
-                    JSONArray itemar = items1.getJSONArray("item");
-
-                    List<FestivalDto> itemList = new ArrayList<>();
-
-                    // JSONArray의 길이 얻기
-                    int length = itemar.length();
-                    for (int i = 0; i < length; i++) {
-                        JSONObject item1 = itemar.getJSONObject(i);
-
-                        // 필요한 데이터 추출 및 ItemDTO 생성
-                        FestivalDto itemDTO = new FestivalDto(
-                                item1.optString("addr1", ""),
-                                item1.optString("addr2", ""),
-                                item1.optString("eventstartdate", ""),
-                                item1.optString("eventenddate", ""),
-                                item1.optString("firstimage", ""),
-                                item1.optString("firstimage2", ""),
-                                item1.optString("tel", ""),
-                                item1.optString("title", "")
-                        );
-                        itemList.add(itemDTO);
-                    }
-
-                    // LocationResponseDTO 생성 및 성공적인 응답 반환
-                    FestivalResearchResponse responseDTO = new FestivalResearchResponse(itemList);
-                    return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line);
                 }
-            } else {
-                // 오류 응답
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+                System.out.println("Response Data: " + response.toString());
+
+                // JSON 파싱
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                JSONObject body = jsonResponse.getJSONObject("response").getJSONObject("body");
+                JSONArray items = body.getJSONObject("items").getJSONArray("item");
+
+                List<FestivalDto> festivalList = new ArrayList<>();
+                for (int i = 0; i < items.length(); i++) {
+                    JSONObject item = items.getJSONObject(i);
+                    FestivalDto festival = new FestivalDto(
+                            item.optString("addr1", ""),
+                            item.optString("addr2", ""),
+                            item.optString("eventstartdate", ""),
+                            item.optString("eventenddate", ""),
+                            item.optString("firstimage", ""),
+                            item.optString("firstimage2", ""),
+                            item.optString("tel", ""),
+                            item.optString("title", "")
+                    );
+                    festivalList.add(festival);
+                }
+
+                // Response 생성 및 반환
+                FestivalResearchResponse responseDto = new FestivalResearchResponse(festivalList);
+                return new ResponseEntity<>(responseDto, HttpStatus.OK);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } catch (Exception e) {
+
+        } catch (IOException e) {
             e.printStackTrace();
-            // 예외 발생 시 에러 응답
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
