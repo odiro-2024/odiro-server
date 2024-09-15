@@ -53,6 +53,8 @@ public class CommentController {
             @RequestParam Long dayPlanId,
             @RequestParam(defaultValue = "0") int page) {
 
+        page = (page > 0) ? page - 1 : 0;
+
         // CommentService를 이용하여 페이지 처리된 CommentDto 리스트를 가져옴
         Page<CommentDetailDto> comments = commentService.getCommentsByDayPlanId(dayPlanId, page);
 

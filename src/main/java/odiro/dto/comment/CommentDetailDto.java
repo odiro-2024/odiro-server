@@ -15,8 +15,8 @@ public class CommentDetailDto {
 
     private Long id;
     private String content;
-    private String writerName;
-    private LocalDateTime writeTime;
+    private String username;
+    private LocalDateTime createdAt;
 
     public static CommentDetailDto fromEntity(Comment comment) {
         return new CommentDetailDto(
